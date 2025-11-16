@@ -53,7 +53,7 @@ export const Earnings = () => {
             <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>Загрузка...</p>
           </div>
         ) : (
-          <EarningsTable earnings={earnings} onUpdate={loadEarnings} />
+          <EarningsTable earnings={earnings} />
         )}
 
         {/* Form */}

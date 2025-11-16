@@ -6,10 +6,9 @@ import { TEAM_MEMBERS } from '@/types'
 
 interface EarningsTableProps {
   earnings: Earnings[]
-  onUpdate: () => void
 }
 
-export const EarningsTable = ({ earnings, onUpdate }: EarningsTableProps) => {
+export const EarningsTable = ({ earnings }: EarningsTableProps) => {
   const { theme } = useThemeStore()
 
   const weekRange = getWeekRange()
