@@ -2,8 +2,8 @@
 import { useState, useEffect } from 'react'
 import { useAuthStore } from '@/store/authStore'
 import { useThemeStore } from '@/store/themeStore'
-import { addDayStatus, updateDayStatus, getDayStatuses, getWorkSlots } from '@/services/firestoreService'
-import { formatDate, isSameDate, getMoscowTime } from '@/utils/dateUtils'
+import { addDayStatus, updateDayStatus, getDayStatuses } from '@/services/firestoreService'
+import { formatDate, isSameDate } from '@/utils/dateUtils'
 import { X } from 'lucide-react'
 import { DayStatus } from '@/types'
 

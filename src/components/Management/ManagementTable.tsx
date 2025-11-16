@@ -173,8 +173,11 @@ export const ManagementTable = ({ selectedUserId, onEditSlot, onEditStatus }: Ma
                               {slot.slots.map((s) => `${s.start}-${s.end}`).join(', ')}
                             </div>
                             {slot.comment && (
-                              <div className="flex items-center justify-center">
-                                <Info className="w-4 h-4 text-gray-400" title={slot.comment} />
+                              <div className="flex items-center justify-center group relative">
+                                <Info className="w-4 h-4 text-gray-400 cursor-help" />
+                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                                  {slot.comment}
+                                </div>
                               </div>
                             )}
                             {(isAdmin || user.id === slot.userId) && (
@@ -208,8 +211,11 @@ export const ManagementTable = ({ selectedUserId, onEditSlot, onEditStatus }: Ma
                               {status.type === 'dayoff' ? 'Выходной' : status.type === 'sick' ? 'Больничный' : 'Отпуск'}
                             </div>
                             {status.comment && (
-                              <div className="flex items-center justify-center">
-                                <Info className="w-4 h-4 text-gray-400" title={status.comment} />
+                              <div className="flex items-center justify-center group relative">
+                                <Info className="w-4 h-4 text-gray-400 cursor-help" />
+                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                                  {status.comment}
+                                </div>
                               </div>
                             )}
                             {(isAdmin || user.id === status.userId) && (

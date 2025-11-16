@@ -66,7 +66,7 @@ export const Rating = () => {
         }
 
         // Update with current data
-        const updatedData: Omit<RatingData, 'rating' | 'lastUpdated'> = {
+        const updatedData: Omit<RatingData, 'rating'> = {
           userId: member.id,
           earnings: totalEarnings,
           messages: ratingData.messages || 0,
@@ -78,6 +78,7 @@ export const Rating = () => {
           sickDays,
           vacationDays,
           poolAmount,
+          lastUpdated: new Date().toISOString(),
         }
 
         const rating = calculateRating(updatedData)
@@ -85,7 +86,6 @@ export const Rating = () => {
         allRatings.push({
           ...updatedData,
           rating,
-          lastUpdated: new Date().toISOString(),
         })
       }
 

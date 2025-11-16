@@ -1,7 +1,6 @@
 // Form for adding/editing work slots
 import { useState, useEffect } from 'react'
 import { useAuthStore } from '@/store/authStore'
-import { useAdminStore } from '@/store/adminStore'
 import { useThemeStore } from '@/store/themeStore'
 import { addWorkSlot, updateWorkSlot, getWorkSlots } from '@/services/firestoreService'
 import { calculateHours, timeOverlaps, formatDate } from '@/utils/dateUtils'

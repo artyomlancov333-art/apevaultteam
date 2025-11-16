@@ -63,6 +63,17 @@ npm run dev
 
 ## Деплой на Vercel
 
+### Важно: Подключение GitHub к Vercel
+
+Если вы видите ошибку **"Social Account is not yet connected to any Vercel user"**:
+
+1. Перейдите на [vercel.com](https://vercel.com)
+2. Нажмите **"Sign Up"** или **"Log In"**
+3. Выберите **"Continue with GitHub"**
+4. Авторизуйтесь и разрешите доступ Vercel к вашему GitHub аккаунту
+
+Подробная инструкция: см. файл `VERCEL_SETUP.md`
+
 ### Способ 1: Через Vercel CLI
 
 1. Установите Vercel CLI:

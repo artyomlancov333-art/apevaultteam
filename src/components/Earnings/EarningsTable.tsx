@@ -1,13 +1,8 @@
 // Earnings statistics table
 import { useThemeStore } from '@/store/themeStore'
-import { useAuthStore } from '@/store/authStore'
-import { useAdminStore } from '@/store/adminStore'
-import { updateEarnings, deleteEarnings } from '@/services/firestoreService'
 import { formatDate, getWeekRange } from '@/utils/dateUtils'
 import { Earnings } from '@/types'
 import { TEAM_MEMBERS } from '@/types'
-import { Edit, Trash2 } from 'lucide-react'
-import { useState } from 'react'
 
 interface EarningsTableProps {
   earnings: Earnings[]
@@ -16,11 +11,6 @@ interface EarningsTableProps {
 
 export const EarningsTable = ({ earnings, onUpdate }: EarningsTableProps) => {
   const { theme } = useThemeStore()
-  const { user } = useAuthStore()
-  const { isAdmin } = useAdminStore()
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [editAmount, setEditAmount] = useState('')
-  const [editPoolAmount, setEditPoolAmount] = useState('')
 
   const weekRange = getWeekRange()
   const weekStart = formatDate(weekRange.start, 'yyyy-MM-dd')
@@ -39,60 +29,6 @@ export const EarningsTable = ({ earnings, onUpdate }: EarningsTableProps) => {
     const totalPool = userEarnings.reduce((sum, e) => sum + e.poolAmount, 0)
 
     return { totalEarnings, totalPool, count: userEarnings.length }
-  }
-
-  const handleEdit = (earning: Earnings) => {
-    setEditingId(earning.id)
-    setEditAmount(earning.amount.toString())
-    setEditPoolAmount(earning.poolAmount.toString())
-  }
-
-  const handleSaveEdit = async (id: string) => {
-    if (!user) return
-
-    const originalEarning = earnings.find((e) => e.id === id)
-    if (!originalEarning) return
-
-    const newAmount = parseFloat(editAmount)
-    const newPoolAmount = parseFloat(editPoolAmount)
-
-    // Check edit range (500 rubles, unless admin)
-    if (!isAdmin) {
-      const amountDiff = Math.abs(newAmount - originalEarning.amount)
-      const poolDiff = Math.abs(newPoolAmount - originalEarning.poolAmount)
-
-      if (amountDiff > 500 || poolDiff > 500) {
-        alert('Можно изменить заработок только в диапазоне 500 рублей. Для больших изменений обратитесь к администратору.')
-        return
-      }
-    }
-
-    try {
-      await updateEarnings(id, {
-        amount: newAmount,
-        poolAmount: newPoolAmount,
-      })
-      setEditingId(null)
-      onUpdate()
-    } catch (error) {
-      alert('Ошибка при обновлении')
-    }
-  }
-
-  const handleDelete = async (id: string) => {
-    if (!isAdmin && user?.id !== earnings.find((e) => e.id === id)?.userId) {
-      alert('Только администратор может удалять чужие записи')
-      return
-    }
-
-    if (confirm('Удалить запись о заработке?')) {
-      try {
-        await deleteEarnings(id)
-        onUpdate()
-      } catch (error) {
-        alert('Ошибка при удалении')
-      }
-    }
   }
 
   // Calculate team totals
