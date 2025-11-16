@@ -1,0 +1,33 @@
+═══════════════════════════════════════════════════════════════
+  КРАТКАЯ ИНСТРУКЦИЯ ПО ЗАГРУЗКЕ НА GITHUB
+═══════════════════════════════════════════════════════════════
+
+1. СОЗДАЙТЕ РЕПОЗИТОРИЙ НА GITHUB:
+   - Зайдите на github.com
+   - Нажмите "New repository"
+   - Назовите репозиторий (например: apevault)
+   - НЕ отмечайте "Initialize with README"
+   - Нажмите "Create repository"
+
+2. ОТКРОЙТЕ ТЕРМИНАЛ В ПАПКЕ ПРОЕКТА И ВЫПОЛНИТЕ:
+
+   git init
+   git add .
+   git commit -m "Initial commit: ApeVault project"
+   git branch -M main
+   git remote add origin https://github.com/ВАШ_USERNAME/apevault.git
+   git push -u origin main
+
+   (Замените ВАШ_USERNAME на ваш GitHub username)
+
+3. ГОТОВО! Проект загружен на GitHub.
+
+═══════════════════════════════════════════════════════════════
+
+ВАЖНО:
+- Файл .env НЕ будет загружен (он в .gitignore)
+- Все секретные ключи останутся локально
+- После загрузки можно подключить к Vercel для деплоя
+
+Подробная инструкция: GITHUB_SETUP.md
+

@@ -1,0 +1,148 @@
+// Rating page
+import { useState, useEffect } from 'react'
+import { Layout } from '@/components/Layout'
+import { useThemeStore } from '@/store/themeStore'
+import { RatingCard } from '@/components/Rating/RatingCard'
+import { getRatingData, getEarnings, getDayStatuses } from '@/services/firestoreService'
+import { getWeekRange, formatDate } from '@/utils/dateUtils'
+import { calculateRating, getRatingColor } from '@/utils/ratingUtils'
+import { RatingData } from '@/types'
+import { TEAM_MEMBERS } from '@/types'
+
+export const Rating = () => {
+  const { theme } = useThemeStore()
+  const [ratings, setRatings] = useState<RatingData[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadRatings()
+  }, [])
+
+  const loadRatings = async () => {
+    setLoading(true)
+    try {
+      // Calculate ratings for all users
+      const weekRange = getWeekRange()
+      const weekStart = formatDate(weekRange.start, 'yyyy-MM-dd')
+      const weekEnd = formatDate(weekRange.end, 'yyyy-MM-dd')
+
+      const monthStart = formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1), 'yyyy-MM-dd')
+      const monthEnd = formatDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0), 'yyyy-MM-dd')
+
+      const allRatings: RatingData[] = []
+
+      for (const member of TEAM_MEMBERS) {
+        // Get earnings for the week
+        const weekEarnings = await getEarnings(member.id, weekStart, weekEnd)
+        const totalEarnings = weekEarnings.reduce((sum, e) => sum + e.amount, 0)
+        const poolAmount = weekEarnings.reduce((sum, e) => sum + e.poolAmount, 0)
+
+        // Get day statuses for the month
+        const monthStatuses = await getDayStatuses(member.id)
+        const monthStatusesFiltered = monthStatuses.filter(
+          (s) => s.date >= monthStart && s.date <= monthEnd
+        )
+
+        const daysOff = monthStatusesFiltered.filter((s) => s.type === 'dayoff').length
+        const sickDays = monthStatusesFiltered.filter((s) => s.type === 'sick').length
+        const vacationDays = monthStatusesFiltered.filter((s) => s.type === 'vacation').length
+
+        // Get existing rating data or create new
+        const existingRatings = await getRatingData(member.id)
+        const ratingData = existingRatings[0] || {
+          userId: member.id,
+          earnings: 0,
+          messages: 0,
+          initiatives: 0,
+          signals: 0,
+          profitableSignals: 0,
+          referrals: 0,
+          daysOff: 0,
+          sickDays: 0,
+          vacationDays: 0,
+          poolAmount: 0,
+          rating: 0,
+          lastUpdated: new Date().toISOString(),
+        }
+
+        // Update with current data
+        const updatedData: Omit<RatingData, 'rating'> = {
+          userId: member.id,
+          earnings: totalEarnings,
+          messages: ratingData.messages || 0,
+          initiatives: ratingData.initiatives || 0,
+          signals: ratingData.signals || 0,
+          profitableSignals: ratingData.profitableSignals || 0,
+          referrals: ratingData.referrals || 0, // Permanent, doesn't reset
+          daysOff,
+          sickDays,
+          vacationDays,
+          poolAmount,
+        }
+
+        const rating = calculateRating(updatedData)
+
+        allRatings.push({
+          ...updatedData,
+          rating,
+          lastUpdated: new Date().toISOString(),
+        })
+      }
+
+      // Sort by rating
+      allRatings.sort((a, b) => b.rating - a.rating)
+      setRatings(allRatings)
+    } catch (error) {
+      console.error('Error loading ratings:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const teamKPD = ratings.reduce((sum, r) => sum + r.rating, 0) / (ratings.length || 1)
+
+  return (
+    <Layout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className={`rounded-lg p-6 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-md`}>
+          <h2 className="text-2xl font-bold text-white mb-2">Рейтинг</h2>
+          <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+            Рейтинг актуален на 7 дней. Обновляется автоматически.
+          </p>
+        </div>
+
+        {/* Team KPD */}
+        <div className={`rounded-lg p-6 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-md`}>
+          <h3 className="text-lg font-semibold text-white mb-2">КПД команды</h3>
+          <div className="flex items-center gap-4">
+            <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-8 overflow-hidden">
+              <div
+                className="h-full bg-green-500 transition-all duration-300 flex items-center justify-center"
+                style={{ width: `${Math.min(teamKPD, 100)}%` }}
+              >
+                <span className="text-white text-sm font-semibold">
+                  {teamKPD.toFixed(1)}%
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Rating cards */}
+        {loading ? (
+          <div className={`rounded-lg p-8 text-center ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
+            <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>Загрузка...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {ratings.map((rating) => (
+              <RatingCard key={rating.userId} rating={rating} />
+            ))}
+          </div>
+        )}
+      </div>
+    </Layout>
+  )
+}
+
