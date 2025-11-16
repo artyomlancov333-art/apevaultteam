@@ -10,7 +10,6 @@ import {
   query,
   where,
   orderBy,
-  Timestamp,
 } from 'firebase/firestore'
 import { db } from '@/firebase/config'
 import { WorkSlot, DayStatus, Earnings, RatingData } from '@/types'
@@ -118,7 +117,25 @@ export const getRatingData = async (userId?: string) => {
   }
 
   const snapshot = await getDocs(q)
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as RatingData))
+  return snapshot.docs.map((doc) => {
+    const data = doc.data()
+    return {
+      id: doc.id,
+      userId: data.userId || '',
+      earnings: data.earnings || 0,
+      messages: data.messages || 0,
+      initiatives: data.initiatives || 0,
+      signals: data.signals || 0,
+      profitableSignals: data.profitableSignals || 0,
+      referrals: data.referrals || 0,
+      daysOff: data.daysOff || 0,
+      sickDays: data.sickDays || 0,
+      vacationDays: data.vacationDays || 0,
+      poolAmount: data.poolAmount || 0,
+      rating: data.rating || 0,
+      lastUpdated: data.lastUpdated || new Date().toISOString(),
+    } as RatingData
+  })
 }
 
 export const updateRatingData = async (userId: string, data: Partial<RatingData>) => {

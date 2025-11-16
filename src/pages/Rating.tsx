@@ -5,7 +5,7 @@ import { useThemeStore } from '@/store/themeStore'
 import { RatingCard } from '@/components/Rating/RatingCard'
 import { getRatingData, getEarnings, getDayStatuses } from '@/services/firestoreService'
 import { getWeekRange, formatDate } from '@/utils/dateUtils'
-import { calculateRating, getRatingColor } from '@/utils/ratingUtils'
+import { calculateRating } from '@/utils/ratingUtils'
 import { RatingData } from '@/types'
 import { TEAM_MEMBERS } from '@/types'
 
@@ -66,7 +66,7 @@ export const Rating = () => {
         }
 
         // Update with current data
-        const updatedData: Omit<RatingData, 'rating'> = {
+        const updatedData: Omit<RatingData, 'rating' | 'lastUpdated'> = {
           userId: member.id,
           earnings: totalEarnings,
           messages: ratingData.messages || 0,

@@ -2,19 +2,14 @@
 import { useState, useEffect } from 'react'
 import { Layout } from '@/components/Layout'
 import { useThemeStore } from '@/store/themeStore'
-import { useAuthStore } from '@/store/authStore'
-import { useAdminStore } from '@/store/adminStore'
 import { EarningsForm } from '@/components/Earnings/EarningsForm'
 import { EarningsTable } from '@/components/Earnings/EarningsTable'
-import { getEarnings, getWorkSlots } from '@/services/firestoreService'
-import { formatDate, getWeekRange, getMoscowTime } from '@/utils/dateUtils'
+import { getEarnings } from '@/services/firestoreService'
 import { Earnings as EarningsType } from '@/types'
 import { Plus } from 'lucide-react'
 
 export const Earnings = () => {
   const { theme } = useThemeStore()
-  const { user } = useAuthStore()
-  const { isAdmin } = useAdminStore()
   const [showForm, setShowForm] = useState(false)
   const [earnings, setEarnings] = useState<EarningsType[]>([])
   const [loading, setLoading] = useState(true)

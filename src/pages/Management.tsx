@@ -1,5 +1,5 @@
 // Management page - main component for managing slots, days off, sick leave, and vacation
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Layout } from '@/components/Layout'
 import { useThemeStore } from '@/store/themeStore'
 import { useAuthStore } from '@/store/authStore'
@@ -16,7 +16,6 @@ type ViewMode = 'table' | 'week'
 export const Management = () => {
   const { theme } = useThemeStore()
   const { user } = useAuthStore()
-  const { isAdmin } = useAdminStore()
   const [viewMode, setViewMode] = useState<ViewMode>('table')
   const [showSlotForm, setShowSlotForm] = useState(false)
   const [showStatusForm, setShowStatusForm] = useState(false)

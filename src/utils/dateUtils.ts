@@ -1,5 +1,5 @@
 // Date utility functions
-import { format, addDays, startOfWeek, endOfWeek, eachDayOfInterval, parseISO, isSameDay, isBefore, isAfter, addWeeks, subWeeks } from 'date-fns'
+import { format, addDays, startOfWeek, endOfWeek, eachDayOfInterval, parseISO, isSameDay, isBefore, isAfter } from 'date-fns'
 import { ru } from 'date-fns/locale'
 
 export const formatDate = (date: Date | string, formatStr: string = 'dd.MM.yyyy'): string => {
@@ -67,8 +67,8 @@ export const getMoscowTime = (): Date => {
 }
 
 export const canAddEarnings = (slotEndTime: string, currentTime: Date = getMoscowTime()): boolean => {
-  const [endHour] = slotEndTime.split(':').map(Number)
   const currentHour = currentTime.getHours()
-  return currentHour >= 21 || currentTime > new Date(`${format(currentTime, 'yyyy-MM-dd')}T${slotEndTime}:00`)
+  const slotEndDate = new Date(`${format(currentTime, 'yyyy-MM-dd')}T${slotEndTime}:00`)
+  return currentHour >= 21 || currentTime > slotEndDate
 }
 

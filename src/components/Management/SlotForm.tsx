@@ -7,7 +7,6 @@ import { addWorkSlot, updateWorkSlot, getWorkSlots } from '@/services/firestoreS
 import { calculateHours, timeOverlaps, formatDate } from '@/utils/dateUtils'
 import { X, Plus, Trash2 } from 'lucide-react'
 import { WorkSlot, TimeSlot } from '@/types'
-import { TEAM_MEMBERS } from '@/types'
 
 interface SlotFormProps {
   slot?: WorkSlot | null
@@ -17,7 +16,6 @@ interface SlotFormProps {
 
 export const SlotForm = ({ slot, onClose, onSave }: SlotFormProps) => {
   const { user } = useAuthStore()
-  const { isAdmin } = useAdminStore()
   const { theme } = useThemeStore()
   const [date, setDate] = useState(slot?.date || formatDate(new Date(), 'yyyy-MM-dd'))
   const [slots, setSlots] = useState<TimeSlot[]>(slot?.slots || [])
